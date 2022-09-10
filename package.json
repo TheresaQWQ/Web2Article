@@ -1,12 +1,16 @@
 {
   "dependencies": {
-    "axios": "^0.27.2",
     "html2json": "^1.0.2",
-    "json2html": "^0.0.8",
-    "user-agents": "^1.0.1133"
+    "typescript": "^4.8.3"
   },
   "devDependencies": {
     "@types/html2json": "^1.0.1",
-    "@types/user-agents": "^1.0.2"
+    "@types/node": "^18.7.16",
+    "axios": "^0.27.2",
+    "ts-node": "^10.9.1"
+  },
+  "main": "./Web2Article.ts",
+  "scripts": {
+    "dev": "ts-node ./test/test.ts"
   }
 }
