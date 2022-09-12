@@ -352,7 +352,10 @@ export const getContent = async (inputHTML: string, options: Web2ArticleOptions 
  * @description: 获取小说的章节列表
  * @param html 
  */
-export const getChapter = async (html: string, limit: number = 2000) => {
+export const getChapter = async (html: string, limit: number = 2000): Promise<{
+  url: string,
+  title: string
+}[]> => {
   const json = await getJSON(html)
 
   const links = findAll(json, tag => {

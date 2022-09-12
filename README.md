@@ -4,7 +4,11 @@
 const Web2Article = require('Web2Article');
 const html = '<html>...</html>';
 
+// 提取内容
 const result = Web2Article.getContent(html);
+
+// 提取章节列表
+const result = Web2Article.getChapter(html);
 ```
 
 - 能适配大部分文章和小说页面

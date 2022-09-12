@@ -40,7 +40,6 @@ const start = async () => {
     const result = await Web2Article.getChapter(html.data)
 
     fs.writeFile(`./test/tmp/chapter${index}.json`, JSON.stringify(result, null, 2))
-
     console.log(`test for ${url} done`)
   }
 
