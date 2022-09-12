@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { promises as fs } from 'fs';
-import Web2Article from '../src/Web2Article'
+import * as Web2Article from '../src/Web2Article'
 
 const novel = [
   'https://www.xbiquge.la/56/56523/23595988.html',
@@ -11,18 +11,36 @@ const article = [
   'https://segmentfault.com/a/1190000017511459'
 ]
 
+const chapter = [
+  'https://www.xbiquge.la/56/56523/',
+  'http://www.biqugse.com/69761/'
+]
+
 const start = async () => {
   console.log(`start test for novel`)
   for (const index in novel) {
     const url = novel[index]
     console.log(`test for ${url}`)
     const html = await axios.get(url)
-    const result = await Web2Article(html.data, {
+    const result = await Web2Article.getContent(html.data, {
       novel: true,
       title: true,
     })
+
     fs.writeFile(`./test/tmp/novel${index}.html`, result.html)
     fs.writeFile(`./test/tmp/novel${index}.json`, JSON.stringify(result, null, 2))
+    console.log(`test for ${url} done`)
+  }
+
+  for (const index in chapter) {
+    const url = chapter[index]
+
+    console.log(`test for ${url}`)
+    const html = await axios.get(url)
+    const result = await Web2Article.getChapter(html.data)
+
+    fs.writeFile(`./test/tmp/chapter${index}.json`, JSON.stringify(result, null, 2))
+
     console.log(`test for ${url} done`)
   }
 
@@ -31,7 +49,7 @@ const start = async () => {
     const url = article[index]
     console.log(`test for ${url}`)
     const html = await axios.get(url)
-    const result = await Web2Article(html.data, {
+    const result = await Web2Article.getContent(html.data, {
       title: true,
       date: true
     })

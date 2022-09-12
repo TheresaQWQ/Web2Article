@@ -1,10 +1,10 @@
 # 网页正文提取
 使用方法: 
 ```javascript
-const parser = require('./Web2Article.js');
+const Web2Article = require('Web2Article');
 const html = '<html>...</html>';
 
-const result = parser(html);
+const result = Web2Article.getContent(html);
 ```
 
 - 能适配大部分文章和小说页面

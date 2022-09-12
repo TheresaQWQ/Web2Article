@@ -8,6 +8,33 @@ const getBody = (html: string) => {
 
   return html
 }
+// 补全结束标签
+const preProcess = (html: string) => {
+  const stack: string[] = []
+
+  for (let i = 0; i < html.length; i++) {
+    const char = html[i]
+
+    if (char === '<') {
+      const fullTag = html.substring(i + 1, html.indexOf('>', i))
+      const tag = fullTag.split(' ')[0]
+      const end = fullTag[fullTag.length - 1]
+      if (end === '/') continue
+      if (tag[0] !== '/') {
+        stack.push(tag)
+      } else {
+        stack.pop()
+      }
+    }
+  }
+
+  while (stack.length > 0) {
+    const tag = stack.pop() as string
+    html += `</${tag}>`
+  }
+
+  return html
+}
 
 // 过滤掉不需要的标签
 const elementFilter = (html: string) => {
@@ -23,7 +50,7 @@ const elementFilter = (html: string) => {
 }
 
 const getJSON = async (html: string) => {
-  const body = getBody(html)
+  const body = getBody(preProcess(html))
   const json = html2json.html2json(elementFilter(body))
   return json
 }
@@ -82,7 +109,7 @@ interface Web2ArticleOptions {
   url?: string
 }
 
-const parser = async (inputHTML: string, options: Web2ArticleOptions = {}) => {
+export const getContent = async (inputHTML: string, options: Web2ArticleOptions = {}) => {
   const json = await getJSON(inputHTML)
 
   const score = (node: html2json.Node) => {
@@ -321,4 +348,31 @@ const parser = async (inputHTML: string, options: Web2ArticleOptions = {}) => {
   return returns
 }
 
-export default parser
+/**
+ * @description: 获取小说的章节列表
+ * @param html 
+ */
+export const getChapter = async (html: string, limit: number = 2000) => {
+  const json = await getJSON(html)
+
+  const links = findAll(json, tag => {
+    if (tag.tag !== 'a') return false
+    if (!tag.attr) return false
+    if (!tag.attr.href) return false
+
+    const str = html2json.json2html(tag)
+    const regex = /第(\d+|一|二|三|四|五|六|七|八|九|十|百|千|万)+章/
+    return regex.test(str)
+  }, limit)
+
+  const result = links.map(link => {
+    const url = (link.attr && link.attr.href) || ''
+    const text = html2text(html2json.json2html(link))
+    return {
+      url: url.toString().trim(),
+      title: text.trim()
+    }
+  })
+
+  return result
+}
